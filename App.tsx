@@ -15,11 +15,19 @@ const DEFAULT_TIME = 600; // 10 minutes in seconds
 const APP_PASSWORD = '20050608';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<AppView>(AppView.SETUP);
+  const [view, setView] = useState<AppView>(AppView.LOGIN);
   const [seconds, setSeconds] = useState(DEFAULT_TIME);
   const [isActive, setIsActive] = useState(false);
+  
+  // App-specific password state (for unlocking/cancelling)
   const [passwordInput, setPasswordInput] = useState('');
   const [isWrongPassword, setIsWrongPassword] = useState(false);
+  
+  // Simulated Login State
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const [persuasiveText, setPersuasiveText] = useState('System ready.');
   
   const timerRef = useRef<number | null>(null);
@@ -69,6 +77,17 @@ const App: React.FC = () => {
     setView(AppView.COUNTDOWN);
   };
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginUsername || !loginPassword) return;
+    setIsLoggingIn(true);
+    // Simulate API delay
+    setTimeout(() => {
+      setIsLoggingIn(false);
+      setView(AppView.SETUP);
+    }, 1200);
+  };
+
   const handleUnlockAttempt = () => {
     if (passwordInput === APP_PASSWORD) {
       setIsActive(false);
@@ -95,7 +114,6 @@ const App: React.FC = () => {
   const ProfilePreview = () => (
     <div className="flex flex-col items-center gap-6 py-6 px-8 rounded-[2rem] bg-white/5 border border-white/10 apple-blur animate-apple">
       <div className="flex items-center gap-6 w-full max-w-sm">
-        {/* Mimicking the profile picture from screenshot */}
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#b8c6db] to-[#f5f7fa] border border-white/10 shadow-inner overflow-hidden relative">
           <div className="absolute inset-0 bg-blue-400/10 blur-xl"></div>
         </div>
@@ -138,11 +156,77 @@ const App: React.FC = () => {
 
       <main className="flex-grow flex flex-col items-center justify-center px-4 pt-16 pb-12 overflow-y-auto">
         
+        {/* Login View */}
+        {view === AppView.LOGIN && (
+          <div className="w-full max-w-sm space-y-12 animate-apple">
+            <header className="text-center space-y-4">
+              <div className="w-16 h-16 bg-gradient-to-tr from-[#f09433] via-[#e6683c] to-[#bc1888] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/10">
+                <i className="fab fa-instagram text-white text-3xl"></i>
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight text-white">Sign In</h1>
+              <p className="text-[#86868b] text-sm">Instagramアカウントでログインして、<br />自動フォロー機能を開始します。</p>
+            </header>
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <input 
+                  type="text"
+                  placeholder="ユーザーネーム、電話番号、またはメールアドレス"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  className="w-full bg-[#1d1d1f] border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:ring-1 focus:ring-white/20 transition-all placeholder:text-[#424245]"
+                  required
+                />
+                <input 
+                  type="password"
+                  placeholder="パスワード"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full bg-[#1d1d1f] border border-white/10 rounded-xl py-3 px-4 text-white text-sm focus:outline-none focus:ring-1 focus:ring-white/20 transition-all placeholder:text-[#424245]"
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isLoggingIn}
+                className={`w-full py-3.5 ${isLoggingIn ? 'bg-[#0071e3]/50' : 'bg-[#0071e3]'} text-white font-semibold rounded-xl hover:bg-[#0077ed] transition-all text-sm active:scale-[0.98] flex items-center justify-center gap-2`}
+              >
+                {isLoggingIn ? (
+                  <i className="fas fa-circle-notch animate-spin"></i>
+                ) : (
+                  'ログイン'
+                )}
+              </button>
+
+              <div className="flex items-center justify-between pt-2">
+                <div className="h-[1px] bg-white/10 flex-grow"></div>
+                <span className="px-4 text-[10px] text-[#424245] uppercase font-bold tracking-widest">or</span>
+                <div className="h-[1px] bg-white/10 flex-grow"></div>
+              </div>
+
+              <button 
+                type="button"
+                className="w-full py-3 text-[#0071e3] font-semibold text-sm hover:underline"
+              >
+                パスワードを忘れた場合
+              </button>
+            </form>
+
+            <footer className="text-center">
+              <p className="text-[#424245] text-[10px] leading-relaxed">
+                ログインすることで、プライバシー規約および<br />
+                セキュリティプロトコルに同意したことになります。
+              </p>
+            </footer>
+          </div>
+        )}
+
         {/* Setup View */}
         {view === AppView.SETUP && (
           <div className="text-center max-w-2xl w-full space-y-10 animate-apple">
             <header className="space-y-4">
-              <h2 className="text-[#86868b] text-lg font-semibold tracking-tight">System Ready</h2>
+              <h2 className="text-[#86868b] text-lg font-semibold tracking-tight">Login Successful</h2>
               <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-tight">
                 新しい、<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-[#86868b]">つながりのデザイン。</span>
