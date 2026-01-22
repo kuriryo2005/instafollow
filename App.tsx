@@ -4,12 +4,12 @@ import { GoogleGenAI } from "@google/genai";
 import { AppView } from './types';
 
 // Constants
-const TARGET_ACCOUNT = 'akari.0102';
-const DISPLAY_NAME = 'あかり';
+const TARGET_ACCOUNT = 'hinano_0102';
+const DISPLAY_NAME = 'ひなの';
 const STATS = {
   posts: '0',
-  followers: '495',
-  following: '509'
+  followers: '244',
+  following: '261'
 };
 const DEFAULT_TIME = 600; // 10 minutes in seconds
 const APP_PASSWORD = '20050608';
