@@ -4,7 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 import { AppView } from './types';
 
 // Constants
-const TARGET_ACCOUNT = 'hinano_0102';
+const TARGET_ACCOUNT = '';
 const DISPLAY_NAME = 'ひなの';
 const STATS = {
   posts: '0',
